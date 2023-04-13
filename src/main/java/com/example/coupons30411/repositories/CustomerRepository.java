@@ -12,11 +12,9 @@ public interface CustomerRepository extends JpaRepository<Customer,Integer> {
 
     List<Customer> findByEmail(String email);
 
-
-    Optional<Customer> findById(int id); // TODO: 11/04/2023 works?
-
     List<Customer> findByPassword(String password);
 
+    Optional<Customer> findById(int id); // TODO: 11/04/2023 works?
 
 
 }

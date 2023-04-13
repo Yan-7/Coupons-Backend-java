@@ -28,13 +28,21 @@ public class TestAdminService implements CommandLineRunner {
         Customer customer3 = new Customer(3, "Bob3", "Sponge", "bob3@", "1234", null);
 
 
+//        adminService.addCustomer(customer3);
 //        adminService.login("admin@admin.com","admin");
+//    adminService.addCompany(comp3);
+//          adminService.getOneCustomer(2);
 
-//        List<Company> companies = adminService.getAllCompanies();
-//        System.out.println(companies);
-
-
+//        System.out.println(adminService.getAllCompanies());
 //        System.out.println(adminService.getOneCompany(2));
-        adminService.addCustomer(customer3);
+//        adminService.addCustomer(customer3);
+//        adminService.updateCustomer(customer2);
+//        adminService.deleteCustomer(customer2.getId());
+//        adminService.deleteCompany(8);
+//        System.out.println(adminService.getAllCustomers());
+//        System.out.println(adminService.getOneCompany(2));
+//        System.out.println(adminService.getOneCustomer(8));
+//        adminService.deleteCustomer(11);
         }
+
 }

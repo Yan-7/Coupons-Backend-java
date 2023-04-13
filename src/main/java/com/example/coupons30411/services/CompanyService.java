@@ -11,7 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,96 +21,107 @@ import java.util.Optional;
 @Transactional
 public class CompanyService extends ClientService {
 
+    private int companyId;
     @Autowired
-    private CouponRepository couponRepository;
-    @Autowired
-    private CompanyRepository companyRepository;
-    @Autowired
-    CustomerRepository customerRepository;
+    private EntityManager entityManager; //EntityManager represents a connection to the database and provides methods for managing entities.
 
-    private Company company;
 
     @Override
-    public boolean login(String email, String password) {
-        Optional<Company> opt = companyRepository.findByEmailAndPassword(email, password);
-        System.out.println("company details:");
-        if (opt.isPresent()) {
-            this.company = opt.get();
-
-            System.out.println("logged as company: " + company);
-            System.out.println("------------------>");
-
+    public boolean login(String email, String password) { //v
+        Optional<Company> companyOpt = companyRepository.findByEmailAndPassword(email, password);
+        if (companyOpt.isPresent()) {
+            Company company = companyOpt.get();
+            this.companyId = company.getId();
+            System.out.println("company " + company.getName() + " Login successful");
             return true;
-        } else {
-            System.out.println("login failed");
         }
+        System.out.println("could not login");
         return false;
     }
 
-    public void addCoupon(Coupon coupon) {
-        if (couponRepository.findByDescriptionAndCompany_Id(coupon.getDescription(), this.company.getId()).isEmpty()) {
-            company = this.companyRepository.findById(company.getId()).orElseThrow();
-            if (coupon.getStartDate().isBefore(coupon.getEndDate()) && coupon.getEndDate().isAfter(LocalDate.now())) {
-                company.attachCouponToCompany(coupon);
-                companyRepository.save(company);
-                System.out.println("Coupon with id: " + coupon.getId() + " added");
-            } else {
-                System.out.println("addCoupon failed - can't add coupon with these dates");
-            }
+    public void addCouponToCompany(Coupon coupon) { //v
+        Optional<Company> optionalCompany = this.companyRepository.findById(companyId);
+        if (optionalCompany.isPresent()) {
+            Company company = optionalCompany.get();
+            Coupon mergedCoupon = entityManager.merge(coupon); // Reattaches the Coupon object to the current session
+            company.attachCouponToCompany(mergedCoupon);
+            System.out.println("Coupon " + mergedCoupon.getId() + " was added to company " + company.getId());
         } else {
-            System.out.println("addCoupon failed - coupon is already in the company DB");
+            System.out.println("Could not add coupon to company");
         }
     }
 
-    public void updateCoupon(Coupon coupon) {
-        if (!couponRepository.findByIdAndCompany_id(coupon.getId(), company.getId()).isEmpty()) {
-            couponRepository.save(coupon);
-            System.out.println("coupon " + coupon.getId() + " updated");
+    public void updateCoupon(Coupon coupon) { //v
+        if (couponRepository.existsById(coupon.getId())) {
+            this.couponRepository.save(coupon);
+            System.out.println("coupon " + coupon.getId() + " updated to repository");
         } else {
-            System.out.println("coupon was not found, cannot update");
+            System.out.println("coupon not found, could not update coupon");
         }
     }
 
-    public void deleteCoupon(int couponID) {
-        if (couponRepository.existsById(couponID)) {
-            couponRepository.deleteById(couponID);
-            System.out.println("coupon " + couponID + " deleted");
+    public void deleteCoupon(int couponId) { //v
+        if (couponRepository.existsById(couponId)) {
+            couponRepository.deleteById(couponId);
+            System.out.println("coupon " + couponId + " deleted");
         } else {
-            System.out.println("coupon was not found, cannot delete");
+            System.out.println("could not delete coupon");
         }
     }
 
-    public List<Coupon> getCompanyCoupons() {
-        List<Coupon> companyCoupons = this.couponRepository.findByCompany_id(company.getId());
-
-        for (Coupon c : companyCoupons) {
-            System.out.println(c);
+    public List<Coupon> getCompanyCoupons() { //v
+        List<Coupon> companyCoupons = couponRepository.findByCompany_id(companyId);
+        if (!companyCoupons.isEmpty()) {
+            System.out.println("list of all company coupons:");
+            return companyCoupons;
+        } else {
+            System.out.println("could not find coupons");
+            return null;
         }
-        System.out.println("---------");
-        return companyCoupons;
     }
 
-    public List<Coupon> getCompanyCouponsByCategory(Category category) {
-
-        List<Coupon> companyCouponsByCategory = couponRepository.findByCompany_idAndCategory(company.getId(), category);
-        System.out.println("category: " +category);
-        return companyCouponsByCategory;
-    }
-
-    public List<Coupon> getCompanyCouponsByMaxPrice(int maxPrice) {
-        List<Coupon> couponsListByPrice = couponRepository.findByCompany_idAndPriceLessThan(company.getId(), 150);
-        System.out.println("max price: " + maxPrice);
-        return couponsListByPrice;
-    }
-
-    // TODO: not working
-    public Company getCompanyDetails() {
-        Optional<Company> companyOpt = companyRepository.findById(this.company.getId());
-        if (companyOpt.isPresent()) {
-            this.company = companyOpt.get();
-            return company;
+    public List<Coupon> getCompanyCouponsByCategory(Category category) { //v
+        List<Coupon> companyCoupons = getCompanyCoupons();
+        List<Coupon> companyCoupons2 = new ArrayList<>();
+        if (!companyCoupons.isEmpty()) {
+            System.out.println("company coupons by category: " + category);
+            return companyCoupons;
         }
-        System.out.println("company not found");
+
+        System.out.println("could not find coupons by category " + category);
         return null;
+
+    }
+
+    public List<Coupon> getCompanyCouponsByMaxPrice(double maxPrice) { //v
+        List<Coupon> companyCoupons = getCompanyCoupons();
+        if (!companyCoupons.isEmpty()) {
+            List<Coupon> companyCoupons2 = new ArrayList<>();
+            for (Coupon c : companyCoupons) {
+                if (c.getPrice() <= maxPrice) {
+                    companyCoupons2.add(c);
+                }
+            }
+
+            if (!companyCoupons2.isEmpty()) {
+                System.out.println("list of coupons by max price " + maxPrice);
+                System.out.println(companyCoupons2);
+                return companyCoupons2;
+            }
+        }
+        System.out.println("could not find coupons by company id: " + companyId + "and max price: " + maxPrice);
+        return null;
+    }
+
+    public Company getCompanyDetails() { //v
+        Optional<Company> optional = companyRepository.findById(companyId);
+        if (optional.isPresent()) {
+            Company company = optional.get();
+            System.out.println("company details: ");
+            return company;
+        } else {
+            System.out.println("could not find company");
+            return null;
+        }
     }
 }

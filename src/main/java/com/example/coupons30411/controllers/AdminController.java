@@ -17,10 +17,6 @@ import java.util.Optional;
 @CrossOrigin
 public class AdminController extends ClientController {
 
-    // TODO: 12/04/2023 get attributes from admin service 
-    private final static String emailA = "admin@admin.com";
-    private final static String passwordA = "admin";
-
     @Autowired
     AdminService adminService;
 
@@ -28,12 +24,7 @@ public class AdminController extends ClientController {
     @GetMapping("/login")
     @Override
     public boolean login(String email, String password) {
-        if (email == emailA && password == passwordA) {
-            adminService.login(email, password);
-            return true;
-        } else {
-            return false;
-        }
+        return adminService.login(email,password);
     }
 
     @GetMapping("/test")
@@ -42,8 +33,7 @@ public class AdminController extends ClientController {
         return "returning test string";
     }
 
-    // TODO: 12/04/2023 "status": 400,
-    //  "error": "Bad Request", 
+    // TODO: 13/04/2023 terminal test ok, swagger: Error: response status is 400 
     @PostMapping("/add-company")
     public Company addCompany(@RequestBody Company company) throws CouponException {
         try {
@@ -74,17 +64,19 @@ public class AdminController extends ClientController {
         }
     }
 
-    //
-    @GetMapping("/get-all")
-    // TODO: 12/04/2023 Error: response status is 500
-    // TODO: 12/04/2023 Cannot invoke "com.example.coupons30411.repositories.CompanyRepository.findAll()" because "this.adminService.companyRepository" is null
+    //v
+    @GetMapping("/get-all-companies")
     public List<Company> getAllCompanies() {
-        List<Company> allCompanies = adminService.companyRepository.findAll();
-        System.out.println(allCompanies);
-        return adminService.companyRepository.findAll();
+        return adminService.getAllCompanies();
     }
 
-    // TODO: 13/04/2023 producing result but: "Failure while trying to resolve exception \"
+    //v
+    @GetMapping("get-all-customers")
+    public List<Customer> getAllCustomers() {
+        return adminService.getAllCustomers();
+    }
+
+    //v
     @GetMapping("get-one-company")
     public Company getOneCompany(int companyID) {
         Optional<Company> optionalCompany = null;
@@ -105,8 +97,8 @@ public class AdminController extends ClientController {
 
     }
 
-
-    @PostMapping("/add-customer") //v
+    // terminal working, not swagger
+    @PostMapping("/add-customer")
     public void addOneCustomer(Customer customer) {
         try {
             adminService.addCustomer(customer);
@@ -118,38 +110,37 @@ public class AdminController extends ClientController {
         System.out.println(customer.getFirstName() + " customer saved");
 
     }
-//
-//    }
-//
-//    public void updateCustomer(Customer customer) {
-//        System.out.println(customer);
-//        if (customerRepository.existsById(customer.getId())) {
-//            customerRepository.save(customer);
-//            System.out.println("customer updated");
-//        } else System.out.println("cannot find customer");
-//    }
-//
-////    public void deleteCustomer(int customerID)  {
-////        Optional<Customer> customerOPT = customerRepository.findById(customerID);
-////        if (customerOPT.isPresent()) {
-////            customerRepository.deleteById(customerID);
-////            System.out.println("customer " + customerID + " deleted");
-////        }else System.out.println("cannot delete customer");
-////    }
-//
-//
-//    public List<Customer> getAllCustomers() {
-//        return customerRepository.findAll();
-//    }
-//
-////    public Customer getOneCustomer(int customerID) throws CouponsException {
-////        Optional<Customer> optionalCustomer = customerRepository.findById(customerID);
-////        if (optionalCustomer.isPresent()) {
-////            Customer customer =optionalCustomer.get();
-////            return customer;
-////        } else System.out.println("cannot find customer");
-////        return null;
-////    }
-//
-//
+
+    // TODO: 13/04/2023 test ok, swagger "Invalid character found in the request target-terminal"
+    @PostMapping("update-customer")
+    public void updateCustomer(Customer customer) {
+        try {
+            adminService.updateCustomer(customer);
+        } catch (CouponException e) {
+//            throw new RuntimeException(e);
+            System.out.println("cannot find customer");
+        }
+    }
+
+    //v
+    @DeleteMapping("/delete-customer")
+    public void deleteCustomer(int customerID) {
+        try {
+            adminService.deleteCustomer(customerID);
+        } catch (CouponException e) {
+            System.out.println("cannot delete customer");
+            throw new RuntimeException(e);
+        }
+    }
+    //v
+    @GetMapping("/get-one-customer")
+    public Optional<Customer> getOneCustomer(int customerID) {
+        try {
+            return adminService.getOneCustomer(customerID);
+        } catch (CouponException e) {
+            throw new RuntimeException("could not get customer by controller");
+        }
+    }
+
+
 }

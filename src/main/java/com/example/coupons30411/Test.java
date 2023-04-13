@@ -5,14 +5,11 @@ import com.example.coupons30411.entities.Category;
 import com.example.coupons30411.entities.Company;
 import com.example.coupons30411.entities.Coupon;
 import com.example.coupons30411.entities.Customer;
-import com.example.coupons30411.login.ClientType;
 import com.example.coupons30411.services.AdminService;
 import com.example.coupons30411.services.CompanyService;
 import com.example.coupons30411.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
-import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -77,9 +74,9 @@ public class Test implements CommandLineRunner {
         System.out.println("Company service test started------------------------------>");
 //        CompanyService companyService = (CompanyService) loginManager.login(comp2.getEmail(), comp2.getPassword(), ClientType.Company);
         testCompanyService.login(comp2.getEmail(), comp2.getPassword());
-        testCompanyService.addCoupon(coupon1);
-        testCompanyService.addCoupon(coupon2);
-        testCompanyService.addCoupon(coupon3);
+        testCompanyService.addCouponToCompany(coupon1);
+        testCompanyService.addCouponToCompany(coupon2);
+        testCompanyService.addCouponToCompany(coupon3);
 //        testCompanyService.updateCoupon(coupon1);
 //        testCompanyService.deleteCoupon(2);
 //        System.out.println(testCompanyService.getCompanyDetails());

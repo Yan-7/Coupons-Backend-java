@@ -8,7 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public abstract class ClientService {
 
-    
+    @Autowired
+    public CouponRepository couponRepository;
+    @Autowired
+    public CompanyRepository companyRepository;
+    @Autowired
+    public CustomerRepository customerRepository;
+
     ClientService clientService;
 
     public boolean login(String email, String password) {

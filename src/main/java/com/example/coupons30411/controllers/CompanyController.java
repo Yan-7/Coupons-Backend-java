@@ -1,65 +1,35 @@
-//package com.CouponsSysytemREST.controllers;
-//
-//
-//import com.CouponsSysytemREST.entities.Company;
-//import com.CouponsSysytemREST.entities.Coupon;
-//import com.CouponsSysytemREST.repositories.CompanyRepository;
-//import com.CouponsSysytemREST.repositories.CouponRepository;
-//import com.CouponsSysytemREST.repositories.CustomerRepository;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.stereotype.Service;
-//import org.springframework.transaction.annotation.Transactional;
-//
-//import java.time.LocalDate;
-//import java.util.List;
-//import java.util.Optional;
-//
-//@Service
-//@Transactional
-//public class CompanyController extends ClientController {
-//
-//
-//    @Autowired
-//    private CouponRepository couponRepository;
-//    @Autowired
-//    private CompanyRepository companyRepository;
-//    @Autowired
-//    CustomerRepository customerRepository;
-//
-//    private Company company;
-//
-//    @Override
-//    public boolean login(String email, String password) {
-//        Optional<Company> opt = companyRepository.findByEmailAndPassword(email, password);
-//        System.out.println("company details:");
-//        if (opt.isPresent()) {
-//            this.company = opt.get();
-//
-//            System.out.println("logged as company: " + company);
-//            System.out.println("------------------>");
-//
-//            return true;
-//        } else {
-//            System.out.println("login failed");
-//        }
-//        return false;
-//    }
-//
-//    public void addCoupon(Coupon coupon) {
-//        if (couponRepository.findByDescriptionAndCompany_Id(coupon.getDescription(), this.company.getId()).isEmpty()) {
-//            company = this.companyRepository.findById(company.getId()).orElseThrow();
-//            if (coupon.getStartDate().isBefore(coupon.getEndDate()) && coupon.getEndDate().isAfter(LocalDate.now())) {
-//                company.addCouponToCompany(coupon);
-//                companyRepository.save(company);
-//
-//                System.out.println("Coupon with id: " + coupon.getId() + " added");
-//            } else {
-//                System.out.println("addCoupon failed - can't add coupon with these dates");
-//            }
-//        } else {
-//            System.out.println("addCoupon failed - coupon is already in the company DB");
-//        }
-//    }
+package com.example.coupons30411.controllers;
+
+
+import com.example.coupons30411.entities.Coupon;
+import com.example.coupons30411.services.CompanyService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.*;
+
+
+@Service
+@Transactional
+@RequestMapping("api/company")
+@RestController
+public class CompanyController extends ClientController {
+
+    @Autowired
+    private CompanyService companyService;
+
+    @Override
+    @GetMapping("/login")
+    //v returns true
+    public boolean login(String email, String password) {
+        return companyService.login(email,password);
+    }
+
+    // TODO: 13/04/2023 Error: response status is 400
+    @PostMapping("/add-coupon-to-company")
+    public void addCoupon(Coupon coupon) {
+        companyService.addCouponToCompany(coupon);
+    }
 //
 //    public void updateCoupon(Coupon coupon) {
 //        if (!couponRepository.findByIdAndCompany_id(coupon.getId(), company.getId()).isEmpty()) {
@@ -69,16 +39,13 @@
 //            System.out.println("coupon was not found, cannot update");
 //        }
 //    }
-//
-//    public void deleteCoupon(int couponID) {
-//        if (couponRepository.existsById(couponID)) {
-//            couponRepository.deleteById(couponID);
-//            System.out.println("coupon " + couponID + " deleted");
-//        } else {
-//            System.out.println("coupon was not found, cannot delete");
-//        }
-//    }
-//
+
+    //v
+    @DeleteMapping("delete-coupon")
+    public void deleteCoupon(int couponID) {
+        companyService.deleteCoupon(couponID);
+    }
+
 //    public List<Coupon> getCompanyCoupons() {
 //        List<Coupon> companyCoupons = this.couponRepository.findByCompany_id(company.getId());
 //
@@ -112,5 +79,5 @@
 //        System.out.println("company not found");
 //        return null;
 //    }
-//
-//    }
+
+    }

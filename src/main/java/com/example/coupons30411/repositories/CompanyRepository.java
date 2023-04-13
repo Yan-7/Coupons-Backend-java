@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface CompanyRepository extends JpaRepository<Company,Integer> {
-    Optional<Company> findByEmailAndPassword(String email, String password);
 
+    Optional<Company> findByEmailAndPassword(String email, String password);
 
     List<Company> findByEmail(String email);
 
