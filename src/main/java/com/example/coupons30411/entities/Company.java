@@ -3,6 +3,7 @@ package com.example.coupons30411.entities;
 
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 
@@ -30,7 +31,7 @@ public class Company {
     @Column(nullable = false)
     private String password;
 
-
+    @JsonIgnore
     @OneToMany(mappedBy = "company",cascade = CascadeType.ALL)
     private List<Coupon> coupons;
 

@@ -1,6 +1,7 @@
 package com.example.coupons30411.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -33,10 +34,12 @@ public class Coupon {
     private double price;
     private String image;
 
+    @JsonIgnore
     @ManyToMany(mappedBy = "coupons", cascade = CascadeType.DETACH)
     @ToString.Exclude
     private List<Customer> customers;
 
+    @JsonIgnore //?
     @ManyToOne
     @JoinColumn(name = "company_id")
     @ToString.Exclude

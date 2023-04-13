@@ -10,6 +10,7 @@ import com.example.coupons30411.services.CompanyService;
 import com.example.coupons30411.services.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;

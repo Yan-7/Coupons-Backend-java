@@ -22,19 +22,9 @@ public class AdminService extends ClientService {
     private final static String emailA = "admin@admin.com";
     private final static String passwordA = "admin";
 
-//    @Autowired
-//    public CompanyRepository companyRepository;
-//
-//    @Autowired
-//    public CustomerRepository customerRepository;
-//
-//    @Autowired
-//    public CouponRepository couponRepository;
-
-
     @Override
     public boolean login(String email, String password) {
-        if (email == emailA && password == passwordA) {
+        if (email.equals(emailA)  && password.equals(passwordA) ) {
             System.out.println("user admin logged through service- return true");
             return true;
         } else {

@@ -4,6 +4,7 @@ package com.example.coupons30411.services;
 import com.example.coupons30411.entities.Category;
 import com.example.coupons30411.entities.Company;
 import com.example.coupons30411.entities.Coupon;
+import com.example.coupons30411.entities.Customer;
 import com.example.coupons30411.repositories.CompanyRepository;
 import com.example.coupons30411.repositories.CouponRepository;
 import com.example.coupons30411.repositories.CustomerRepository;
@@ -11,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,96 +24,96 @@ import java.util.Optional;
 @Transactional
 public class CustomerService extends ClientService {
 
-    @Autowired
-    private CouponRepository couponRepository;
-    @Autowired
-    private CompanyRepository companyRepository;
-    @Autowired
-    CustomerRepository customerRepository;
+    private int customerId;
 
-    private Company company;
+    @Autowired
+    private EntityManager entityManager;
 
     @Override
     public boolean login(String email, String password) {
-        Optional<Company> opt = companyRepository.findByEmailAndPassword(email, password);
-        System.out.println("company details:");
-        if (opt.isPresent()) {
-            this.company = opt.get();
-
-            System.out.println("logged as company: " + company);
-            System.out.println("------------------>");
+        Optional<Customer> customerOpt = customerRepository.findByEmailAndPassword(email, password);
+        if (customerOpt.isPresent()) {
+            Customer customer = customerOpt.get();
+            this.customerId = customer.getId();
+            System.out.println("Login successful, customer " + customer.getFirstName() + " is logged in");
 
             return true;
-        } else {
-            System.out.println("login failed");
         }
+        System.out.println("failed not login");
         return false;
     }
 
-    public void addCoupon(Coupon coupon) {
-        if (couponRepository.findByDescriptionAndCompany_Id(coupon.getDescription(), this.company.getId()).isEmpty()) {
-            company = this.companyRepository.findById(company.getId()).orElseThrow();
-            if (coupon.getStartDate().isBefore(coupon.getEndDate()) && coupon.getEndDate().isAfter(LocalDate.now())) {
-                company.attachCouponToCompany(coupon);
-                companyRepository.save(company);
-                System.out.println("Coupon with id: " + coupon.getId() + " added");
-            } else {
-                System.out.println("addCoupon failed - can't add coupon with these dates");
+    //v
+    public void purchaseCoupon(int couponId) {  //v
+        Optional<Customer> customerOpt = customerRepository.findById(customerId);
+        if (customerOpt.isPresent()) {
+            Customer customer1 = customerOpt.get();
+            System.out.println();
+            System.out.println("customer for adding coupon: " + customer1);
+            Optional<Coupon> optionalCoupon = couponRepository.findById(couponId);
+            System.out.println("the coupon: " + optionalCoupon);
+            if (optionalCoupon.isPresent()) {
+                Coupon coupon1 = optionalCoupon.get();
+                customer1.attachCouponToCustomer(coupon1);
+                coupon1.setAmount(coupon1.getAmount() - 1);
+                return;
             }
-        } else {
-            System.out.println("addCoupon failed - coupon is already in the company DB");
         }
+        System.out.println("could not add coupon to customer");
     }
 
-    public void updateCoupon(Coupon coupon) {
-        if (!couponRepository.findByIdAndCompany_id(coupon.getId(), company.getId()).isEmpty()) {
-            couponRepository.save(coupon);
-            System.out.println("coupon " + coupon.getId() + " updated");
-        } else {
-            System.out.println("coupon was not found, cannot update");
+    public List<Coupon> getCustomerCoupons() { //v
+        System.out.println("customer " + customerId + " coupons:");
+        return couponRepository.findByCustomers_id(customerId);
+    }
+
+
+    @Transactional
+    public List<Coupon> getCustomerCouponsByCategory(Category category) {  //v
+        Optional<Customer> customerOpt = customerRepository.findById(customerId);
+        if (customerOpt.isPresent()) {
+            Customer customer = customerOpt.get();
+            System.out.println("customer coupons by category: " + category);
+            List<Coupon> customerCoupons = customer.getCoupons();
+            System.out.println(customerCoupons);
+            // load the coupons eagerly before the session is closed
+            System.out.println("size: " + customerCoupons.size());
+
+            List<Coupon> result = new ArrayList<>();
+            for (Coupon coupon : customerCoupons) {
+                if (coupon.getCategory().equals(category)) {
+                    result.add(coupon);
+                }
+            }
+            System.out.println("coupons by category: " + category);
+            System.out.println(result);
+            return result;
         }
-    }
-
-    public void deleteCoupon(int couponID) {
-        if (couponRepository.existsById(couponID)) {
-            couponRepository.deleteById(couponID);
-            System.out.println("coupon " + couponID + " deleted");
-        } else {
-            System.out.println("coupon was not found, cannot delete");
-        }
-    }
-
-    public List<Coupon> getCompanyCoupons() {
-        List<Coupon> companyCoupons = this.couponRepository.findByCompany_id(company.getId());
-
-        for (Coupon c : companyCoupons) {
-            System.out.println(c);
-        }
-        System.out.println("---------");
-        return companyCoupons;
-    }
-
-    public List<Coupon> getCompanyCouponsByCategory(Category category) {
-
-        List<Coupon> companyCouponsByCategory = couponRepository.findByCompany_idAndCategory(company.getId(), category);
-        System.out.println("category: " +category);
-        return companyCouponsByCategory;
-    }
-
-    public List<Coupon> getCompanyCouponsByMaxPrice(int maxPrice) {
-        List<Coupon> couponsListByPrice = couponRepository.findByCompany_idAndPriceLessThan(company.getId(), 150);
-        System.out.println("max price: " + maxPrice);
-        return couponsListByPrice;
-    }
-
-    // TODO: not working
-    public Company getCompanyDetails() {
-        Optional<Company> companyOpt = companyRepository.findById(this.company.getId());
-        if (companyOpt.isPresent()) {
-            this.company = companyOpt.get();
-            return company;
-        }
-        System.out.println("company not found");
+        System.out.println("could not find coupon");
         return null;
     }
+    public List<Coupon> getCustomerCouponsByMaxPrice(double maxPrice) { //v
+        List<Coupon> customerCoupons = couponRepository.findByCustomers_id(customerId);
+
+        if (!customerCoupons.isEmpty()) {
+            List<Coupon> customerCoupons2 = new ArrayList<>();
+            for (Coupon c : customerCoupons) {
+                if (c.getPrice() <= maxPrice) {
+                    customerCoupons2.add(c);
+                }
+            }
+            System.out.println("customer coupons by price: " + maxPrice);
+            System.out.println(customerCoupons2);
+            return customerCoupons2;
+        }
+        System.out.println("could not find coupons by max price "+ maxPrice);
+        return null;
+    }
+
+
+    public Optional<Customer> getCustomerDetails() { //v
+        System.out.println("customer details:");
+        return customerRepository.findById(customerId);
+    }
+
 }

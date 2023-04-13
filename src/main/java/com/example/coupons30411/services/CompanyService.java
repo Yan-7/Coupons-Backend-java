@@ -25,7 +25,6 @@ public class CompanyService extends ClientService {
     @Autowired
     private EntityManager entityManager; //EntityManager represents a connection to the database and provides methods for managing entities.
 
-
     @Override
     public boolean login(String email, String password) { //v
         Optional<Company> companyOpt = companyRepository.findByEmailAndPassword(email, password);
@@ -59,7 +58,7 @@ public class CompanyService extends ClientService {
             System.out.println("coupon not found, could not update coupon");
         }
     }
-
+    //v
     public void deleteCoupon(int couponId) { //v
         if (couponRepository.existsById(couponId)) {
             couponRepository.deleteById(couponId);
@@ -82,12 +81,10 @@ public class CompanyService extends ClientService {
 
     public List<Coupon> getCompanyCouponsByCategory(Category category) { //v
         List<Coupon> companyCoupons = getCompanyCoupons();
-        List<Coupon> companyCoupons2 = new ArrayList<>();
         if (!companyCoupons.isEmpty()) {
             System.out.println("company coupons by category: " + category);
             return companyCoupons;
         }
-
         System.out.println("could not find coupons by category " + category);
         return null;
 

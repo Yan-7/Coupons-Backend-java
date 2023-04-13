@@ -2,6 +2,7 @@ package com.example.coupons30411.entities;
 
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -36,6 +37,7 @@ public class Customer {
             joinColumns = @JoinColumn(name = "customer_id"),
             inverseJoinColumns = @JoinColumn(name = "coupon_id")
     )
+    @JsonIgnore
     private List<Coupon> coupons;
 
     public void attachCouponToCustomer(Coupon coupon){

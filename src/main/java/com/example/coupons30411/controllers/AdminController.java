@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-@RestController
 // http://localhost:8080/
+@RestController
 @RequestMapping("/api/admin")
 @CrossOrigin
 public class AdminController extends ClientController {
@@ -20,33 +20,26 @@ public class AdminController extends ClientController {
     @Autowired
     AdminService adminService;
 
-    // TODO: 13/04/2023 through test- 0k , swagger- 200 but returns false 
-    @GetMapping("/login")
+    @PostMapping("/login")
     @Override
-    public boolean login(String email, String password) {
+    //v
+    public boolean login(@RequestParam String email,@RequestParam String password) {
         return adminService.login(email,password);
     }
 
-    @GetMapping("/test")
-    public String testAdmin() {   // v
-        System.out.println("admin test print");
-        return "returning test string";
-    }
-
-    // TODO: 13/04/2023 terminal test ok, swagger: Error: response status is 400 
+    //v
     @PostMapping("/add-company")
     public Company addCompany(@RequestBody Company company) throws CouponException {
         try {
             return this.adminService.addCompany(company);
         } catch (CouponException e) {
-            throw new CouponException("cannot add");
+            throw new CouponException("cannot add company ERROR");
         }
     }
 
-
-    // TODO: 12/04/2023 Error: response status is 400
-    @PostMapping("/update")
-    public void updateCompany(Company company) {
+    //v
+    @PostMapping("/update-company")
+    public void updateCompany(@RequestBody Company company) {
         try {
             adminService.updateCompany(company);
         } catch (CouponException e) {
@@ -54,12 +47,13 @@ public class AdminController extends ClientController {
         }
 
     }
-
-    @DeleteMapping("/delete") //v
-    public void deleteCompany(int companyID) {
+    //v
+    @DeleteMapping("/delete-customer")
+    public void deleteCustomer(int customerID) {
         try {
-            adminService.deleteCompany(companyID);
+            adminService.deleteCustomer(customerID);
         } catch (CouponException e) {
+            System.out.println("cannot delete customer");
             throw new RuntimeException(e);
         }
     }
@@ -71,13 +65,13 @@ public class AdminController extends ClientController {
     }
 
     //v
-    @GetMapping("get-all-customers")
+    @GetMapping("/get-all-customers")
     public List<Customer> getAllCustomers() {
         return adminService.getAllCustomers();
     }
 
     //v
-    @GetMapping("get-one-company")
+    @GetMapping("/get-one-company")
     public Company getOneCompany(int companyID) {
         Optional<Company> optionalCompany = null;
         try {
@@ -97,7 +91,7 @@ public class AdminController extends ClientController {
 
     }
 
-    // terminal working, not swagger
+    // v
     @PostMapping("/add-customer")
     public void addOneCustomer(Customer customer) {
         try {
@@ -111,9 +105,9 @@ public class AdminController extends ClientController {
 
     }
 
-    // TODO: 13/04/2023 test ok, swagger "Invalid character found in the request target-terminal"
+    //v
     @PostMapping("update-customer")
-    public void updateCustomer(Customer customer) {
+    public void updateCustomer(@RequestBody Customer customer) {
         try {
             adminService.updateCustomer(customer);
         } catch (CouponException e) {
@@ -123,16 +117,6 @@ public class AdminController extends ClientController {
     }
 
     //v
-    @DeleteMapping("/delete-customer")
-    public void deleteCustomer(int customerID) {
-        try {
-            adminService.deleteCustomer(customerID);
-        } catch (CouponException e) {
-            System.out.println("cannot delete customer");
-            throw new RuntimeException(e);
-        }
-    }
-    //v
     @GetMapping("/get-one-customer")
     public Optional<Customer> getOneCustomer(int customerID) {
         try {
@@ -141,6 +125,5 @@ public class AdminController extends ClientController {
             throw new RuntimeException("could not get customer by controller");
         }
     }
-
 
 }
