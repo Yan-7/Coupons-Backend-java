@@ -10,14 +10,6 @@ public abstract class ClientService {
 
     
     ClientService clientService;
-    @Autowired
-    public CompanyRepository companyRepository;
-
-    @Autowired
-    public CustomerRepository customerRepository;
-
-    @Autowired
-    public CouponRepository couponRepository;
 
     public boolean login(String email, String password) {
         return false;

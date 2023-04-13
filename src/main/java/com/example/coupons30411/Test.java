@@ -54,8 +54,8 @@ public class Test implements CommandLineRunner {
 //        AdminService admin = adminService.login("admin@admin.com", "admin",ClientType.Admin );
 //        adminService.login("admin@admin.com", "admin");
         System.out.println();
-        adminService.addOneCustomer(customer1);
-        adminService.addOneCustomer(customer2);
+        adminService.addCustomer(customer1);
+        adminService.addCustomer(customer2);
         adminService.updateCustomer(customer1);
         adminService.addCompany(comp1);
         adminService.addCompany(comp2);

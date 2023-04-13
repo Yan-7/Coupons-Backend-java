@@ -1,6 +1,8 @@
 package com.example.coupons30411.login;
 
 
+import com.example.coupons30411.repositories.CompanyRepository;
+import com.example.coupons30411.repositories.CustomerRepository;
 import com.example.coupons30411.services.AdminService;
 import com.example.coupons30411.services.ClientService;
 import com.example.coupons30411.services.CompanyService;
@@ -9,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LoginManager {
+public class LoginManager { // TODO: 13/04/2023 how the loging method is connected?
 
     @Autowired
     private AdminService adminService;
@@ -18,17 +20,38 @@ public class LoginManager {
     @Autowired
     private CompanyService companyService;
 
+    @Autowired
+    private CompanyRepository companiesRep;
+
+    @Autowired
+    private CustomerRepository customerRep;
+
+
     public ClientService login(String email, String password, ClientType clientType) {
-        // TODO: 16/02/2023 check password & email 
         switch (clientType) {
-            case Admin:
-                if (email == "admin@admin.com" && password == "admin") {
+            case Admin: {
+                if ("admin@admin.com".equals(email) && "admin".equals(password)) {
                     return adminService;
                 }
-
+                break;
+            }
+            case Company: {
+                if (companiesRep.findByEmailAndPassword(email, password).isPresent()) {
+                    return companyService;
+                }
+                break;
+            }
+            case Customer: {
+                if (customerRep.findByEmailAndPassword(email, password).orElse(null) != null) {
+                    return customerService;
+                }
+                break;
+            }
         }
+        System.out.println("Could not connect");
         return null;
     }
+
 }
 
 
