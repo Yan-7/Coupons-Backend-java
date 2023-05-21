@@ -2,18 +2,14 @@ package com.example.coupons30411.services;
 
 
 import com.example.coupons30411.entities.Category;
-import com.example.coupons30411.entities.Company;
 import com.example.coupons30411.entities.Coupon;
 import com.example.coupons30411.entities.Customer;
-import com.example.coupons30411.repositories.CompanyRepository;
-import com.example.coupons30411.repositories.CouponRepository;
-import com.example.coupons30411.repositories.CustomerRepository;
+import com.example.coupons30411.exceptions.CouponException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,7 +27,7 @@ public class CustomerService extends ClientService {
 
     @Override
     public boolean login(String email, String password) {
-        Optional<Customer> customerOpt = customerRepository.findByEmailAndPassword(email, password);
+        Optional<Customer> customerOpt = customerRepository.findByUserNameAndPassword(email, password);
         if (customerOpt.isPresent()) {
             Customer customer = customerOpt.get();
             this.customerId = customer.getId();
@@ -41,6 +37,16 @@ public class CustomerService extends ClientService {
         }
         System.out.println("failed not login");
         return false;
+    }
+    public void addCustomer(Customer customer) throws CouponException { //v
+        customer.setId(0); //?
+        if (customerRepository.existsById(customer.getId())) {
+//            throw new CouponException("customer " + customer.getFirstName() + " already exist");
+            System.out.println("customer " +customer.getFirstName() +" already exist");
+            return;
+        }
+        customerRepository.save(customer);
+        System.out.println("customer" + customer.getFirstName() + " saved");
     }
 
     //v

@@ -26,9 +26,9 @@ public class Customer {
     private String lastName;
 
     @Column(unique = true)
-    private String email;
+    private String userName;
 
-    @Column(nullable = false)
+    @Column
     private String password;
 
     @ManyToMany(cascade = {CascadeType.DETACH,CascadeType.PERSIST})

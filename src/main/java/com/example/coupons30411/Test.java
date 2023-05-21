@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.List;
 
-//@Component
+@Component //to run test enable "@component"
 public class Test implements CommandLineRunner {
 
     @Autowired

@@ -37,6 +37,19 @@ public class AdminController extends ClientController {
         }
     }
 
+    // v
+    @PostMapping("/add-customer")
+    public void addOneCustomer(Customer customer) {
+        try {
+            adminService.addCustomer(customer);
+        } catch (CouponException e) {
+//            throw new RuntimeException(e);
+            System.out.println("cannot add customer");
+            return;
+        }
+        System.out.println(customer.getFirstName() + " customer saved");
+
+    }
     //v
     @PostMapping("/update-company")
     public void updateCompany(@RequestBody Company company) {
@@ -91,19 +104,6 @@ public class AdminController extends ClientController {
 
     }
 
-    // v
-    @PostMapping("/add-customer")
-    public void addOneCustomer(Customer customer) {
-        try {
-            adminService.addCustomer(customer);
-        } catch (CouponException e) {
-//            throw new RuntimeException(e);
-            System.out.println("cannot add customer");
-            return;
-        }
-        System.out.println(customer.getFirstName() + " customer saved");
-
-    }
 
     //v
     @PostMapping("update-customer")
