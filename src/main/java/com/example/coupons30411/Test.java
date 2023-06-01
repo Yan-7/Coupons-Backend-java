@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.util.List;
 
-@Component //to run test enable "@component"
+//@Component //to run test enable "@component" - problem with cross origion 8080
 public class Test implements CommandLineRunner {
 
     @Autowired

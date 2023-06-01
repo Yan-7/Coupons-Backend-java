@@ -4,15 +4,11 @@ package com.example.coupons30411.services;
 import com.example.coupons30411.entities.Category;
 import com.example.coupons30411.entities.Company;
 import com.example.coupons30411.entities.Coupon;
-import com.example.coupons30411.repositories.CompanyRepository;
-import com.example.coupons30411.repositories.CouponRepository;
-import com.example.coupons30411.repositories.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -25,17 +21,18 @@ public class CompanyService extends ClientService {
     @Autowired
     private EntityManager entityManager; //EntityManager represents a connection to the database and provides methods for managing entities.
 
+    // TODO: 23/05/2023  
     @Override
-    public boolean login(String email, String password) { //v
+    public String login(String email, String password) { //v
         Optional<Company> companyOpt = companyRepository.findByEmailAndPassword(email, password);
         if (companyOpt.isPresent()) {
             Company company = companyOpt.get();
             this.companyId = company.getId();
             System.out.println("company " + company.getName() + " Login successful");
-            return true;
+            return "change me";
         }
         System.out.println("could not login");
-        return false;
+        return "change me";
     }
 
     public void addCouponToCompany(Coupon coupon) { //v

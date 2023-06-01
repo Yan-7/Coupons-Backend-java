@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -25,9 +24,9 @@ public class CompanyController extends ClientController {
 
     @Override
     @GetMapping("/login")
-    //v returns true
-    public boolean login(String email, String password) {
-        return companyService.login(email, password);
+    // TODO: 23/05/2023 change this
+    public String login(String email, String password) {
+        return "change me";
     }
 
     //v

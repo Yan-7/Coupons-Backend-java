@@ -6,7 +6,9 @@ import com.example.coupons30411.entities.Category;
 import com.example.coupons30411.entities.Coupon;
 import com.example.coupons30411.entities.Customer;
 import com.example.coupons30411.exceptions.CouponException;
+import com.example.coupons30411.security.JwtTokenUtil;
 import com.example.coupons30411.services.CustomerService;
+import org.apache.tomcat.util.json.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,14 +17,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 
 @Service
 @Transactional
 @RestController
-@RequestMapping("api/customer")
-@CrossOrigin(origins = "http://localhost:3000")
+//@RequestMapping("api/customer")
+@RequestMapping // the site is not yet divided into admin/company/customer
+@CrossOrigin(origins = "http://localhost:3000") 
 public class CustomerController extends ClientController {
 
     private Customer customer;
@@ -31,9 +35,8 @@ public class CustomerController extends ClientController {
     CustomerService customerService;
 
 
-    // TODO: 17/05/2023 not sure if working
     @PostMapping("/register")
-    public ResponseEntity<String> addOneCustomer(Customer customer) {
+    public ResponseEntity<String> addOneCustomer(@RequestBody Customer customer) {
         try {
             customerService.addCustomer(customer);
         } catch (CouponException e) {
@@ -46,39 +49,43 @@ public class CustomerController extends ClientController {
 
 
 
-
-    @Override
-    @GetMapping("/login")
-    public boolean login(String email, String password) {
-        return customerService.login(email, password);
+    @PostMapping("/login")
+    public String login(@RequestBody Map<String, String> loginRequest) {
+        String username = loginRequest.get("username");
+        String password = loginRequest.get("password");
+        // Check if username and password are present
+        if (username != null && password != null) {
+            return customerService.login(username, password);
+        } else {
+            // Handle invalid request or missing parameters
+            throw new IllegalArgumentException("Invalid login request");
+        }
     }
 
-
-    @PostMapping("/purchase-coupon")
+    @PostMapping("customer/purchase-coupon")
     public void purchaseCoupon(int couponId) {
         customerService.purchaseCoupon(couponId);
     }
 
-
-    @GetMapping("/get-customer-coupons")
+    @GetMapping("customer/get-customer-coupons")
     public List<Coupon> getCustomerCoupons() {
         return customerService.getCustomerCoupons();
     }
 
 
     @GetMapping("/get-customers-coupons-by-category")
-    public List<Coupon> getCustomerCouponsByCategory(Category category) {
-        return customerService.getCustomerCouponsByCategory(category);
+    public List<Coupon> getCustomerCouponsByCategory(@RequestParam("category") String category) {
+        return customerService.getCustomerCouponsByCategory(Category.valueOf(category));
     }
 
 
-    @GetMapping("/get-customer-coupons-by-price")
-    public List<Coupon> getCustomerCouponsByMaxPrice(double maxPrice) {
+    @GetMapping("/customer/get-customer-coupons-by-price")
+    public List<Coupon> getCustomerCouponsByMaxPrice(@RequestParam("maxPrice") Double maxPrice) {
         return customerService.getCustomerCouponsByMaxPrice(maxPrice);
     }
 
 
-    @GetMapping("/get-customer-details")
+    @GetMapping("/customer/get-customer-details")
     public Optional<Customer> getCustomerDetails() {
         return customerService.getCustomerDetails();
     }

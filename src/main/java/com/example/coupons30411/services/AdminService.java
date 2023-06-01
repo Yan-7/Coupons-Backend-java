@@ -4,10 +4,6 @@ package com.example.coupons30411.services;
 import com.example.coupons30411.entities.Company;
 import com.example.coupons30411.entities.Customer;
 import com.example.coupons30411.exceptions.CouponException;
-import com.example.coupons30411.repositories.CompanyRepository;
-import com.example.coupons30411.repositories.CouponRepository;
-import com.example.coupons30411.repositories.CustomerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,14 +19,15 @@ public class AdminService extends ClientService {
     private final static String passwordA = "admin";
 
     @Override
-    public boolean login(String email, String password) {
+    // TODO: 23/05/2023
+    public String login(String email, String password) {
         if (email.equals(emailA)  && password.equals(passwordA) ) {
             System.out.println("user admin logged through service- return true");
-            return true;
+            return "change me";
         } else {
             System.out.println("email or password are not correct");
             System.out.println("return false to login method");
-            return false;
+            return "change me";
         }
     }
 

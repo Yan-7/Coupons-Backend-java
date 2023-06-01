@@ -5,6 +5,8 @@ import com.example.coupons30411.entities.Category;
 import com.example.coupons30411.entities.Coupon;
 import com.example.coupons30411.entities.Customer;
 import com.example.coupons30411.exceptions.CouponException;
+import com.example.coupons30411.security.JwtTokenUtil;
+import org.apache.tomcat.util.json.Token;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +17,8 @@ import java.util.List;
 import java.util.Optional;
 
 
+
+
 // TODO: 13/04/2023 change class with the updated one
 @Service
 @Transactional
@@ -22,21 +26,24 @@ public class CustomerService extends ClientService {
 
     private int customerId;
 
+
     @Autowired
     private EntityManager entityManager;
 
     @Override
-    public boolean login(String email, String password) {
-        Optional<Customer> customerOpt = customerRepository.findByUserNameAndPassword(email, password);
+    public String login(String userName, String password) {
+        System.out.println( userName +" " + password);
+        Optional<Customer> customerOpt = customerRepository.findByUserNameAndPassword(userName, password);
         if (customerOpt.isPresent()) {
             Customer customer = customerOpt.get();
             this.customerId = customer.getId();
-            System.out.println("Login successful, customer " + customer.getFirstName() + " is logged in");
-
-            return true;
+            String token = JwtTokenUtil.generateToken(String.valueOf(customerId));
+            System.out.println("Login successful, customer " + customer.getFirstName() + " is logged in, token returned");
+            return token;
         }
-        System.out.println("failed not login");
-        return false;
+        System.out.println("login failed (customerService message)");
+        System.out.println("customer id;" + customerId);
+        return null;
     }
     public void addCustomer(Customer customer) throws CouponException { //v
         customer.setId(0); //?

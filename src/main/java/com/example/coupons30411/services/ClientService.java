@@ -17,8 +17,7 @@ public abstract class ClientService {
 
     ClientService clientService;
 
-    public boolean login(String email, String password) {
-        return false;
-    }
+
+    public abstract String login(String email, String password);
     
 }

@@ -23,7 +23,7 @@ public class AdminController extends ClientController {
     @PostMapping("/login")
     @Override
     //v
-    public boolean login(@RequestParam String email,@RequestParam String password) {
+    public String login(@RequestParam String email,@RequestParam String password) {
         return adminService.login(email,password);
     }
 
