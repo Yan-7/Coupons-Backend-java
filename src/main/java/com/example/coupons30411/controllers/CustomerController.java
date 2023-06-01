@@ -24,8 +24,8 @@ import java.util.Optional;
 @Service
 @Transactional
 @RestController
-//@RequestMapping("api/customer")
-@RequestMapping // the site is not yet divided into admin/company/customer
+@RequestMapping("/customer/api")
+//@RequestMapping // the site is not yet divided into admin/company/customer
 @CrossOrigin(origins = "http://localhost:3000") 
 public class CustomerController extends ClientController {
 
@@ -48,19 +48,19 @@ public class CustomerController extends ClientController {
     }
 
 
-
-    @PostMapping("/login")
-    public String login(@RequestBody Map<String, String> loginRequest) {
-        String username = loginRequest.get("username");
-        String password = loginRequest.get("password");
-        // Check if username and password are present
-        if (username != null && password != null) {
-            return customerService.login(username, password);
-        } else {
-            // Handle invalid request or missing parameters
-            throw new IllegalArgumentException("Invalid login request");
-        }
-    }
+    //loginsUrlCustomer= "http://localhost:8080/api/customer/login"; in client.config
+//    @PostMapping("/login")
+//    public String login(@RequestBody Map<String, String> loginRequest) {
+//        String email = loginRequest.get("email");
+//        String password = loginRequest.get("password");
+//        // Check if email and password are present
+//        if (email != null && password != null) {
+//            return customerService.login(email, password);
+//        } else {
+//            // Handle invalid request or missing parameters
+//            throw new IllegalArgumentException("Invalid login request");
+//        }
+//    }
 
     @PostMapping("customer/purchase-coupon")
     public void purchaseCoupon(int couponId) {

@@ -4,7 +4,8 @@ public enum Category {
 
     FOOD,
     PLANTS,
-    ANIMALS, ELECTRICITY;
+    ANIMALS,
+    ELECTRICITY;
 
     Category() {
     }

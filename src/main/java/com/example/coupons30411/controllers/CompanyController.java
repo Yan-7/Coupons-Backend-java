@@ -15,19 +15,19 @@ import java.util.List;
 
 @Service
 @Transactional
-@RequestMapping("api/company")
+@RequestMapping("/company/api")
 @RestController
 public class CompanyController extends ClientController {
 
     @Autowired
     private CompanyService companyService;
 
-    @Override
-    @GetMapping("/login")
-    // TODO: 23/05/2023 change this
-    public String login(String email, String password) {
-        return "change me";
-    }
+//    @Override
+//    @GetMapping("/login")
+//    // TODO: 23/05/2023 change this
+//    public String login(String email, String password) {
+//        return "change me";
+//    }
 
     //v
     @PostMapping("/add-coupon-to-company")

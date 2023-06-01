@@ -13,19 +13,19 @@ import java.util.Optional;
 
 // http://localhost:8080/
 @RestController
-@RequestMapping("/api/admin")
+@RequestMapping("/admin/api")
 @CrossOrigin
 public class AdminController extends ClientController {
 
     @Autowired
     AdminService adminService;
 
-    @PostMapping("/login")
-    @Override
-    //v
-    public String login(@RequestParam String email,@RequestParam String password) {
-        return adminService.login(email,password);
-    }
+//    @PostMapping("/login")
+//    @Override
+//    //v
+//    public String login(@RequestParam String email,@RequestParam String password) {
+//        return adminService.login(email,password);
+//    }
 
     //v
     @PostMapping("/add-company")

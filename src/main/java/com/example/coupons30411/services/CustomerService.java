@@ -31,9 +31,9 @@ public class CustomerService extends ClientService {
     private EntityManager entityManager;
 
     @Override
-    public String login(String userName, String password) {
-        System.out.println( userName +" " + password);
-        Optional<Customer> customerOpt = customerRepository.findByUserNameAndPassword(userName, password);
+    public String login(String email, String password) {
+        System.out.println( email +" " + password);
+        Optional<Customer> customerOpt = customerRepository.findByEmailAndPassword(email, password);
         if (customerOpt.isPresent()) {
             Customer customer = customerOpt.get();
             this.customerId = customer.getId();

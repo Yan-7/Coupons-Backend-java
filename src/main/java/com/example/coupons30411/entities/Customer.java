@@ -26,7 +26,7 @@ public class Customer {
     private String lastName;
 
     @Column(unique = true)
-    private String userName;
+    private String email;
 
     @Column
     private String password;
